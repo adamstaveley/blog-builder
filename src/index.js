@@ -1,34 +1,43 @@
 const path = require("path")
 const lib = require("./lib/lib")
 
-const head = lib.getHtmlComponent(path.join(__dirname, "./components/head.html"))
-const footer = lib.getHtmlComponent(path.join(__dirname, "./components/footer.html"))
-const index = lib.getHtmlComponent(path.join(__dirname, "./components/index.html"))
+//eslint-disable-next-line
+const CWD = __dirname
+
+const publicPath = path.join(CWD, "../public")
+const postsPath = path.join(CWD, "../posts")
+
+const head = lib.getHtmlComponent(path.join(CWD, "./components/head.html"))
+const header = lib.getHtmlComponent(path.join(CWD, "./components/header.html"))
+const footer = lib.getHtmlComponent(path.join(CWD, "./components/footer.html"))
+const index = lib.getHtmlComponent(path.join(CWD, "./components/index.html"))
 
 async function main() {
+    lib.preparePublicDirectory(publicPath)
+
+    // read all markdown posts
+    const posts = await lib.getPosts(postsPath)
+
     // process index page
-    const indexPath = path.join(__dirname, "../public/index.html")
-    const indexPage = lib.getIndexPage({head, index})
+    const indexPath = path.join(publicPath, "./index.html")
+    const indexPage = lib.getIndexPage(head, index, header, posts)
     lib.writePage(indexPath, indexPage)
 
     // process blog post pages
-    const postsDir = path.join(__dirname, "../posts")
-    for (const post of lib.readPostsDir(postsDir)) {
-        const pagePath = path.join(__dirname, "../public/posts", `${post.title}.html`)
-        const postPage = await lib.getPostPage({
-            head, 
-            title: post.title,
-            content: post.content,
-            footer 
-        })
+    for (const post of posts) {
+        const pagePath = path.join(publicPath, "./posts", post.filename)
+        const postPage = await lib.getPostPage(head, post.title, post.content, header, footer)
         lib.writePage(pagePath, postPage)
     }
 
     // process styles
-    const globalStylePath = path.join(__dirname, "./styles/global.scss")
+    const globalStylePath = path.join(CWD, "./styles/global.scss")
     const globalCss = lib.processCss(globalStylePath)
-    const globalStyleOutputPath = path.join(__dirname, "../public/styles/global.css")
+    const globalStyleOutputPath = path.join(CWD, "../public/styles/global.css")
     lib.writePage(globalStyleOutputPath, globalCss.css)
+
+    // TODO: copy all img and styles to public dir
+    // TODO: use prettier to format outgoing html files
 }
 
 main()

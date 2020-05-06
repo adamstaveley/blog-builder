@@ -10,10 +10,14 @@
   "author": "Adam Staveley",
   "license": "MIT",
   "dependencies": {
+    "gray-matter": "^4.0.2",
     "handlebars": "^4.7.6",
     "remark": "^12.0.0",
     "remark-highlight.js": "^6.0.0",
     "remark-html": "^11.0.1",
     "sass": "^1.26.5"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0"
   }
 }

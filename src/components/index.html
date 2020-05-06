@@ -1,13 +1,12 @@
 <div class="container">
-    <h1>
-        Welcome to my Blog
-    </h1>
-    <p>My name is Adam Staveley, a software developer working in Germany on eMobility projects.</p>
+    {{{header}}}
 
     <h2>Blogs</h2>
     <ul>
-        <li>
-            <a href="/posts/intro.html">Intro</a>
-        </li>
+        {{#each blogList}}
+            <li>
+                <a href={{this.href}} alt={{this.title}}>{{this.title}}</a>
+            </li>
+        {{/each}}
     </ul>
 </div>

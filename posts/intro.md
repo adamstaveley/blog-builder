@@ -1,4 +1,7 @@
-# Introduction
+---
+title: "Introduction"
+date: "05/05/2020"
+---
 
 ### Hello, my name is Adam Staveley.
 
@@ -15,4 +18,10 @@ Great. Now let's write some code.
 const variable = 1
 ```
 
-Does it work?
+Does it work? Yes.
+
+How about an image?
+
+![Image of Yaktocat](/img/dan-gold.jpg)
+
+Does it work? Yes
