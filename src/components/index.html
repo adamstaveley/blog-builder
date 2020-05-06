@@ -1,12 +1,14 @@
-<div class="container">
-    {{{header}}}
-
-    <h2>Blogs</h2>
-    <ul>
-        {{#each blogList}}
-            <li>
-                <a href={{this.href}} alt={{this.title}}>{{this.title}}</a>
-            </li>
-        {{/each}}
-    </ul>
-</div>
+<body>
+    <div class="container">
+        {{{pageHeader}}}
+    
+        <h2>Blogs</h2>
+        <ul>
+            {{#each blogList}}
+                <li>
+                    <a href="{{this.href}}" alt="{{this.title}}">{{this.title}}</a>
+                </li>
+            {{/each}}
+        </ul>
+    </div>
+</body>

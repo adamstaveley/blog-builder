@@ -1,43 +1,59 @@
+const fs = require("fs")
 const path = require("path")
 const lib = require("./lib/lib")
 
 //eslint-disable-next-line
 const CWD = __dirname
 
-const publicPath = path.join(CWD, "../public")
-const postsPath = path.join(CWD, "../posts")
-
-const head = lib.getHtmlComponent(path.join(CWD, "./components/head.html"))
-const header = lib.getHtmlComponent(path.join(CWD, "./components/header.html"))
-const footer = lib.getHtmlComponent(path.join(CWD, "./components/footer.html"))
-const index = lib.getHtmlComponent(path.join(CWD, "./components/index.html"))
+const PUBLIC_PATH = path.join(CWD, "../public")
+const POSTS_PATH = path.join(CWD, "../posts")
+const COMPONENTS_PATH = path.join(CWD, "./components")
 
 async function main() {
-    lib.preparePublicDirectory(publicPath)
+    // read all html components
+    const components = lib.loadHtmlComponents(COMPONENTS_PATH)
+
+    // create root-level public directory and subdirectories
+    lib.preparePublicDirectory(PUBLIC_PATH)
 
     // read all markdown posts
-    const posts = await lib.getPosts(postsPath)
+    const posts = await lib.getBlogPosts(POSTS_PATH)
 
-    // process index page
-    const indexPath = path.join(publicPath, "./index.html")
-    const indexPage = lib.getIndexPage(head, index, header, posts)
-    lib.writePage(indexPath, indexPage)
+    // use the createPageBuilder closure to build future pages
+    const pageBuilder = lib.createPageBuilder({
+        documentTemplate: components["document.html"],
+        htmlHeadTemplate: components["html-head.html"],
+        pageHeader: components["page-header.html"]
+    })
 
-    // process blog post pages
+    // build and write index page
+    const indexPath = path.join(PUBLIC_PATH, "./index.html")
+    const indexPage = pageBuilder.buildIndexPage({
+        title: "Adam Staveley",
+        indexTemplate: components["index.html"],
+        posts
+    })
+    fs.writeFileSync(indexPath, indexPage)
+
+    // build and write blog post pages
     for (const post of posts) {
-        const pagePath = path.join(publicPath, "./posts", post.filename)
-        const postPage = await lib.getPostPage(head, post.title, post.content, header, footer)
-        lib.writePage(pagePath, postPage)
+        const pagePath = path.join(PUBLIC_PATH, "./posts", post.filename)
+        const postPage = pageBuilder.buildPostPage({
+            postTemplate: components["post.html"],
+            title: post.title,
+            content: post.content,
+            pageFooter: components["page-footer.html"]
+        })
+        fs.writeFileSync(pagePath, postPage)
     }
 
     // process styles
     const globalStylePath = path.join(CWD, "./styles/global.scss")
     const globalCss = lib.processCss(globalStylePath)
     const globalStyleOutputPath = path.join(CWD, "../public/styles/global.css")
-    lib.writePage(globalStyleOutputPath, globalCss.css)
+    fs.writeFileSync(globalStyleOutputPath, globalCss.css)
 
     // TODO: copy all img and styles to public dir
-    // TODO: use prettier to format outgoing html files
 }
 
 main()
