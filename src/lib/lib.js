@@ -41,11 +41,10 @@ function preparePublicDirectory(publicPath) {
 }
 
 /**
- * Creates a page builder for creating any page type (index and blog post)
+ * Creates a page builder for creating any page type (index and blog post) via closures
  * @param {string} documentTemplate string content for top-level html document component
  * @param {string} htmlHeadTemplate string content for html.head component
  * @param {string} pageHeader string content for page header (same for all pages)
- * @returns {object} closure for creating index or blog post page 
  */
 function createPageBuilder({documentTemplate, htmlHeadTemplate, pageHeader}) {
     const format = (finishedHtml) => prettier.format(finishedHtml, {parser: "html"})
@@ -108,15 +107,25 @@ async function getBlogPosts(postsDir) {
     return posts
 }
 
-/**
- * Convert a scss file to css
- * @param {string} scssFile path to scss file
- * @returns {string} css content
- */
-function processCss(scssFile) {
-    return sass.renderSync({
-        file: scssFile
-    })
+function copyImages(sourceDir, destinationDir) {
+    for (const filename of fs.readdirSync(sourceDir)) {
+        const sourcePath = path.join(sourceDir, filename)
+        const destinationPath = path.join(destinationDir, filename)
+        fs.copyFileSync(sourcePath, destinationPath)
+    }
+}
+
+function copyStyles(sourceDir, destinationDir) {
+    for (const filename of fs.readdirSync(sourceDir)) {
+        const sourcePath = path.join(sourceDir, filename)
+        const destinationPath = path.join(destinationDir, filename.replace(".scss", ".css"))
+        if (sourcePath.endsWith(".scss")) {
+            const result = processCss(sourcePath)
+            fs.writeFileSync(destinationPath, result.css)
+        } else {
+            fs.copyFileSync(sourcePath, destinationPath)
+        }
+    }
 }
 
 /**
@@ -149,6 +158,16 @@ async function processMarkdown(markdownString) {
 }
 
 /**
+ * Convert a scss file to css
+ * @param {string} scssFile path to scss file
+ */
+function processCss(scssFile) {
+    return sass.renderSync({
+        file: scssFile
+    })
+}
+
+/**
  * Helper methods to aid in building a static blog site
  */
 module.exports = {
@@ -156,5 +175,6 @@ module.exports = {
     preparePublicDirectory,
     createPageBuilder,
     getBlogPosts,
-    processCss
+    copyImages,
+    copyStyles
 }

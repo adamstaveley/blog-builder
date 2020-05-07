@@ -9,6 +9,7 @@ const PUBLIC_PATH = path.join(CWD, "../public")
 const POSTS_PATH = path.join(CWD, "../posts")
 const COMPONENTS_PATH = path.join(CWD, "./components")
 
+
 async function main() {
     // read all html components
     const components = lib.loadHtmlComponents(COMPONENTS_PATH)
@@ -47,13 +48,17 @@ async function main() {
         fs.writeFileSync(pagePath, postPage)
     }
 
-    // process styles
-    const globalStylePath = path.join(CWD, "./styles/global.scss")
-    const globalCss = lib.processCss(globalStylePath)
-    const globalStyleOutputPath = path.join(CWD, "../public/styles/global.css")
-    fs.writeFileSync(globalStyleOutputPath, globalCss.css)
+    // copy top-level resources
+    const favicon = "./favicon.ico"
+    const manifest = "./site.webmanifest"
+    fs.copyFileSync(path.join(CWD, favicon), path.join(PUBLIC_PATH, favicon))
+    fs.copyFileSync(path.join(CWD, manifest), path.join(PUBLIC_PATH, manifest))
 
-    // TODO: copy all img and styles to public dir
+    // copy images
+    lib.copyImages(path.join(CWD, "./img"), path.join(PUBLIC_PATH, "./img"))
+
+    // copy styles
+    lib.copyStyles(path.join(CWD, "./styles"), path.join(PUBLIC_PATH, "./styles"))
 }
 
 main()
