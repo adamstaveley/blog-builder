@@ -11,16 +11,16 @@ const COMPONENTS_PATH = path.join(CWD, "./components")
 
 
 async function main() {
-    // read all html components
-    const components = lib.loadHtmlComponents(COMPONENTS_PATH)
-
     // create root-level public directory and subdirectories
     lib.preparePublicDirectory(PUBLIC_PATH)
+
+    // read all html components
+    const components = lib.loadHtmlComponents(COMPONENTS_PATH)
 
     // read all markdown posts
     const posts = await lib.getBlogPosts(POSTS_PATH)
 
-    // use the createPageBuilder closure to build future pages
+    // use the createPageBuilder closure to build all future pages
     const pageBuilder = lib.createPageBuilder({
         documentTemplate: components["document.html"],
         htmlHeadTemplate: components["html-head.html"],

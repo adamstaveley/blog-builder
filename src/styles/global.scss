@@ -6,7 +6,16 @@
     margin: 3rem auto 6rem;
 }
 
+.dark {
+    background-color: rgb(51, 45, 45);
+    color: floralwhite;
+}
+
 img {
     max-width: 400px;
     max-height: 400px;
+}
+
+code {
+    border-radius: 5px;
 }

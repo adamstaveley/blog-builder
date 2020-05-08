@@ -107,6 +107,11 @@ async function getBlogPosts(postsDir) {
     return posts
 }
 
+/**
+ * Copies all images from source to destination directory
+ * @param {string} sourceDir string path of source directory
+ * @param {string} destinationDir string path of destination directory
+ */
 function copyImages(sourceDir, destinationDir) {
     for (const filename of fs.readdirSync(sourceDir)) {
         const sourcePath = path.join(sourceDir, filename)
@@ -115,10 +120,22 @@ function copyImages(sourceDir, destinationDir) {
     }
 }
 
+/**
+ * Copies all styles from source to destination directory
+ * @param {string} sourceDir string path of source directory
+ * @param {string} destinationDir string path of destination directory
+ */
 function copyStyles(sourceDir, destinationDir) {
     for (const filename of fs.readdirSync(sourceDir)) {
-        const sourcePath = path.join(sourceDir, filename)
+        let sourcePath = path.join(sourceDir, filename)
         const destinationPath = path.join(destinationDir, filename.replace(".scss", ".css"))
+        
+        // read symbolic links
+        if (fs.lstatSync(sourcePath).isSymbolicLink()) {
+            const link = fs.readlinkSync(sourcePath)
+            sourcePath = path.join(path.resolve(), link)
+        }
+
         if (sourcePath.endsWith(".scss")) {
             const result = processCss(sourcePath)
             fs.writeFileSync(destinationPath, result.css)
@@ -135,7 +152,6 @@ function copyStyles(sourceDir, destinationDir) {
  * @returns {string} compiled html
  */
 function buildComponent(source, data) {
-    // console.log("compiling", source, "Using", data)
     const template = Handlebars.compile(source)
     return template(data)
 }
