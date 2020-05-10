@@ -10,5 +10,10 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="/styles/global.css">
-    <link rel="stylesheet" href="/styles/gruvbox-dark.css">
+    {{#each styles}}
+        <link rel="stylesheet" href="/styles/{{this}}">
+    {{/each}}
+    {{#each scripts}}
+        <script src="/js/{{this}}" defer></script>
+    {{/each}}
 </head>

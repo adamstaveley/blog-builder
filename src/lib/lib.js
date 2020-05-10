@@ -31,7 +31,8 @@ function preparePublicDirectory(publicPath) {
         publicPath,
         path.join(publicPath, "./img"),
         path.join(publicPath, "./posts"),
-        path.join(publicPath, "./styles")
+        path.join(publicPath, "./styles"),
+        path.join(publicPath, "./js")
     ]
     for (const dir of dirs) {
         if (!fs.existsSync(dir)) {
@@ -78,9 +79,9 @@ function createPageBuilder({documentTemplate, htmlHeadTemplate, pageHeader}) {
          * @param {string} pageFooter string content for the blog post page's footer
          * @returns {string} compiled and formatted html string 
          */
-        buildPostPage: ({title, postTemplate, content, pageFooter}) => {
+        buildPostPage: ({postTemplate, title, styles, scripts, content, pageFooter}) => {
             const compiledHtml = buildComponent(documentTemplate, {
-                head: buildComponent(htmlHeadTemplate, {title}),
+                head: buildComponent(htmlHeadTemplate, {title, styles, scripts}),
                 body: buildComponent(postTemplate, {content, pageHeader, pageFooter})
             })
 
@@ -108,11 +109,11 @@ async function getBlogPosts(postsDir) {
 }
 
 /**
- * Copies all images from source to destination directory
+ * Copies all files from source to destination directory
  * @param {string} sourceDir string path of source directory
  * @param {string} destinationDir string path of destination directory
  */
-function copyImages(sourceDir, destinationDir) {
+function copyFiles(sourceDir, destinationDir) {
     for (const filename of fs.readdirSync(sourceDir)) {
         const sourcePath = path.join(sourceDir, filename)
         const destinationPath = path.join(destinationDir, filename)
@@ -191,6 +192,6 @@ module.exports = {
     preparePublicDirectory,
     createPageBuilder,
     getBlogPosts,
-    copyImages,
+    copyFiles,
     copyStyles
 }

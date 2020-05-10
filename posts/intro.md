@@ -1,6 +1,10 @@
 ---
 title: "Introduction"
 date: "05/05/2020"
+styles:
+    - "gruvbox-dark.css"
+scripts:
+    - "logger.js"
 ---
 
 ### Hello, my name is Adam Staveley.

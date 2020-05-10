@@ -41,9 +41,8 @@ async function main() {
         const pagePath = path.join(PUBLIC_PATH, "./posts", post.filename)
         const postPage = pageBuilder.buildPostPage({
             postTemplate: components["post.html"],
-            title: post.title,
-            content: post.content,
-            pageFooter: components["page-footer.html"]
+            pageFooter: components["page-footer.html"],
+            ...post
         })
         fs.writeFileSync(pagePath, postPage)
     }
@@ -54,10 +53,11 @@ async function main() {
     fs.copyFileSync(path.join(CWD, favicon), path.join(PUBLIC_PATH, favicon))
     fs.copyFileSync(path.join(CWD, manifest), path.join(PUBLIC_PATH, manifest))
 
-    // copy images
-    lib.copyImages(path.join(CWD, "./img"), path.join(PUBLIC_PATH, "./img"))
+    // copy images and scripts
+    lib.copyFiles(path.join(CWD, "./img"), path.join(PUBLIC_PATH, "./img"))
+    lib.copyFiles(path.join(CWD, "/scripts"), path.join(PUBLIC_PATH, "./js"))
 
-    // copy styles
+    // copy styles (process scss and handle symlinks)
     lib.copyStyles(path.join(CWD, "./styles"), path.join(PUBLIC_PATH, "./styles"))
 }
 
