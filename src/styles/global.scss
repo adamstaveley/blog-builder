@@ -2,13 +2,8 @@
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
     Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
     max-width: 36rem;
-    padding: 0 1 rem;
+    padding: 0 1rem;
     margin: 3rem auto 6rem;
-}
-
-.dark {
-    background-color: rgb(51, 45, 45);
-    color: floralwhite;
 }
 
 img {
@@ -16,6 +11,16 @@ img {
     max-height: 400px;
 }
 
-code {
+code {  
     border-radius: 5px;
 }
+
+header {
+    border-bottom: 1px solid slategrey;
+}
+
+footer {
+    border-top: 1px solid slategrey;
+    padding-top: 20px;
+}
+

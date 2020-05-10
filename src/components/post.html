@@ -1,7 +1,13 @@
 <body>
     <div class="container">
         {{{pageHeader}}}
+        <h1>{{title}}</h1>
         {{{content}}}
-        {{{pageFooter}}}
+        <footer>
+            <p>
+                Published on <time datetime="{{date.datetime}}">{{date.value}}</time>
+            </p>
+            <a href="/">Back to Home</a>
+        </footer>
     </div>
 </body>

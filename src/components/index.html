@@ -6,6 +6,10 @@
             {{#each blogList}}
                 <li>
                     <a href="{{this.href}}" alt="{{this.title}}">{{this.title}}</a>
+                     - 
+                    <small>
+                        <time datetime="{{this.date.datetime}}">{{this.date.value}}</time>
+                    </small>
                 </li>
             {{/each}}
         </ul>

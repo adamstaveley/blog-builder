@@ -41,7 +41,6 @@ async function main() {
         const pagePath = path.join(PUBLIC_PATH, "./posts", post.filename)
         const postPage = pageBuilder.buildPostPage({
             postTemplate: components["post.html"],
-            pageFooter: components["page-footer.html"],
             ...post
         })
         fs.writeFileSync(pagePath, postPage)

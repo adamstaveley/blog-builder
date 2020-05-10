@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "build": "node src/index.js",
-    "start": "npm run build && xdg-open http://localhost:8000 && python3 -m http.server --directory ./public"
+    "start": "npm run build && python3 -m http.server --directory ./public"
   },
   "author": "Adam Staveley",
   "license": "MIT",
   "dependencies": {
+    "date-fns": "^2.13.0",
     "gray-matter": "^4.0.2",
     "handlebars": "^4.7.6",
     "highlight.js": "^10.0.2",

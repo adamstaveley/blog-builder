@@ -7,6 +7,8 @@ const sass = require("sass")
 const Handlebars = require("handlebars")
 const matter = require("gray-matter")
 const prettier = require("prettier")
+const format = require("date-fns/format")
+const parseISO = require("date-fns/parseISO")
 
 /**
  * Reads the html component directory and returns a map of filenames to content
@@ -46,6 +48,7 @@ function preparePublicDirectory(publicPath) {
  * @param {string} documentTemplate string content for top-level html document component
  * @param {string} htmlHeadTemplate string content for html.head component
  * @param {string} pageHeader string content for page header (same for all pages)
+ * @param {string} rootTitle title of root document
  */
 function createPageBuilder({documentTemplate, htmlHeadTemplate, pageHeader, rootTitle}) {
     const format = (finishedHtml) => prettier.format(finishedHtml, {parser: "html"})
@@ -53,15 +56,15 @@ function createPageBuilder({documentTemplate, htmlHeadTemplate, pageHeader, root
     return {
         /**
          * Compiles the index page
-         * @param {string} title gives the page a unique title
          * @param {string} indexTemplate string content for the index page's body
-         * @param {Array} posts array of post data (each object must include filename and title)
+         * @param {Array} posts array of post data (each object must include filename, title and date)
          * @returns {string} compiled and formatted html string
          */
         buildIndexPage: ({indexTemplate, posts}) => {
             const blogList = posts.map(post => ({
                 href: `/posts/${post.filename}`,
-                title: post.title
+                title: post.title,
+                date: readableDate(post.date)
             }))
 
             const compiledHtml = buildComponent(documentTemplate, {
@@ -73,17 +76,19 @@ function createPageBuilder({documentTemplate, htmlHeadTemplate, pageHeader, root
         },
         /**
          * Compiles a blog post page
-         * @param {string} title gives the page a unique title
          * @param {string} postTemplate string content for the blog post page's body
-         * @param {content} content string blog post content in html format
-         * @param {string} pageFooter string content for the blog post page's footer
+         * @param {string} title gives the page a unique title
+         * @param {Array<string>} styles additional css stylesheets to load
+         * @param {Array<string>} scripts addtional js scripts to load
+         * @param {string} content string blog post content in html format
          * @returns {string} compiled and formatted html string 
          */
-        buildPostPage: ({postTemplate, title, styles, scripts, content, pageFooter}) => {
-            title = `${title} | ${rootTitle}`
+        buildPostPage: ({postTemplate, title, styles, scripts, content, date}) => {
+            const documentTitle = `${title} | ${rootTitle}`
+            date = readableDate(date)
             const compiledHtml = buildComponent(documentTemplate, {
-                head: buildComponent(htmlHeadTemplate, {title, styles, scripts}),
-                body: buildComponent(postTemplate, {content, pageHeader, pageFooter})
+                head: buildComponent(htmlHeadTemplate, {title: documentTitle, styles, scripts}),
+                body: buildComponent(postTemplate, {pageHeader, title, content, date})
             })
 
             return format(compiledHtml)
@@ -183,6 +188,18 @@ function processCss(scssFile) {
     return sass.renderSync({
         file: scssFile
     })
+}
+
+/**
+ * Parses a date into machine and human readable values 
+ * @param {string} date
+ * @returns {object} object containing datetime (machine readable) and value (human readable) date formats
+ */
+function readableDate(datetime) {
+    return {
+        datetime,
+        value: format(parseISO(datetime), "do LLLL yyyy")
+    }
 }
 
 /**
