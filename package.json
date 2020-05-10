@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node src/index.js",
-    "start": "npm run build && python3 -m http.server --directory ./public"
+    "start": "npm run build && xdg-open http://localhost:8000 && python3 -m http.server --directory ./public"
   },
   "author": "Adam Staveley",
   "license": "MIT",

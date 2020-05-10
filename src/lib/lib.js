@@ -47,7 +47,7 @@ function preparePublicDirectory(publicPath) {
  * @param {string} htmlHeadTemplate string content for html.head component
  * @param {string} pageHeader string content for page header (same for all pages)
  */
-function createPageBuilder({documentTemplate, htmlHeadTemplate, pageHeader}) {
+function createPageBuilder({documentTemplate, htmlHeadTemplate, pageHeader, rootTitle}) {
     const format = (finishedHtml) => prettier.format(finishedHtml, {parser: "html"})
 
     return {
@@ -58,14 +58,14 @@ function createPageBuilder({documentTemplate, htmlHeadTemplate, pageHeader}) {
          * @param {Array} posts array of post data (each object must include filename and title)
          * @returns {string} compiled and formatted html string
          */
-        buildIndexPage: ({title, indexTemplate, posts}) => {
+        buildIndexPage: ({indexTemplate, posts}) => {
             const blogList = posts.map(post => ({
                 href: `/posts/${post.filename}`,
                 title: post.title
             }))
 
             const compiledHtml = buildComponent(documentTemplate, {
-                head: buildComponent(htmlHeadTemplate, {title}),
+                head: buildComponent(htmlHeadTemplate, {title: rootTitle}),
                 body: buildComponent(indexTemplate, {blogList, pageHeader})
             })
 
@@ -80,6 +80,7 @@ function createPageBuilder({documentTemplate, htmlHeadTemplate, pageHeader}) {
          * @returns {string} compiled and formatted html string 
          */
         buildPostPage: ({postTemplate, title, styles, scripts, content, pageFooter}) => {
+            title = `${title} | ${rootTitle}`
             const compiledHtml = buildComponent(documentTemplate, {
                 head: buildComponent(htmlHeadTemplate, {title, styles, scripts}),
                 body: buildComponent(postTemplate, {content, pageHeader, pageFooter})

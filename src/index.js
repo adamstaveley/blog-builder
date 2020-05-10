@@ -24,13 +24,13 @@ async function main() {
     const pageBuilder = lib.createPageBuilder({
         documentTemplate: components["document.html"],
         htmlHeadTemplate: components["html-head.html"],
-        pageHeader: components["page-header.html"]
+        pageHeader: components["page-header.html"],
+        rootTitle: "Adam Staveley"
     })
 
     // build and write index page
     const indexPath = path.join(PUBLIC_PATH, "./index.html")
     const indexPage = pageBuilder.buildIndexPage({
-        title: "Adam Staveley",
         indexTemplate: components["index.html"],
         posts
     })
